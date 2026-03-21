@@ -88,10 +88,10 @@ CREATE TABLE tbl_renovacion (
 
 -- =====================================
 -- USUARIOS
--- Contraseñas: admin123 / empleado123
+-- Contraseñas: admin2026*/ / empleado123
 -- =====================================
 INSERT INTO tbl_usuario (nombres, usuario, password, rol, estado) VALUES
-('Administrador Principal', 'admin',    '$2y$10$ADA9AvdygzxkgaYwwTFAU.5JvhBJBnmVpDhJ9RgXVR8yWkANR4q1i', 'ADMIN',    'A'),
+('Administrador Principal', 'admin',    '$2y$10$20xvLv1F8lyxRu5hvpHokO7ueoP2DNq8HQaMaLA5Ul7XlnE0s1F0u', 'ADMIN',    'A'),
 ('Juan Pérez Empleado',     'empleado', '$2y$10$G8c3iDB.Ned8mW5Wj5tIP.EFqgeQBoJ73x2UxkmTuD8og7/CcD2uG', 'EMPLEADO', 'A');
 
 -- =====================================
