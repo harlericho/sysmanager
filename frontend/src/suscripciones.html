@@ -1,0 +1,350 @@
+<!doctype html>
+<html
+  lang="es"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <title>Suscripciones - SysManager</title>
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="../assets/vendor/js/helpers.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <!-- Auth guard -->
+    <script src="../dist/api.js"></script>
+    <script>
+      (function () {
+        if (!Auth.getToken()) {
+          document.documentElement.style.visibility = 'hidden';
+          window.location.replace('login.html');
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+
+        <!-- MENU LATERAL -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <div class="app-brand demo">
+            <a href="index.html" class="app-brand-link">
+              <span class="app-brand-logo demo">
+                <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path>
+                  </defs>
+                  <g stroke="none" fill="none" fill-rule="evenodd">
+                    <use fill="#696cff" href="#path-1"></use>
+                  </g>
+                </svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bolder ms-2">SysManager</span>
+            </a>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+              <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+          </div>
+          <div class="menu-inner-shadow"></div>
+          <ul class="menu-inner py-1">
+            <li class="menu-item">
+              <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div>
+              </a>
+            </li>
+            <li class="menu-header small text-uppercase">
+              <span class="menu-header-text">Gestion</span>
+            </li>
+            <li class="menu-item">
+              <a href="cliente.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-buildings"></i><div>Clientes</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="planes.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-package"></i><div>Planes</div>
+              </a>
+            </li>
+            <li class="menu-item active">
+              <a href="suscripciones.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i><div>Suscripciones</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="renovaciones.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-refresh"></i><div>Renovaciones</div>
+              </a>
+            </li>
+            <li class="menu-header small text-uppercase" id="menu-admin" style="display:none">
+              <span class="menu-header-text">Administracion</span>
+            </li>
+            <li class="menu-item" id="menu-usuarios" style="display:none">
+              <a href="usuarios.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user"></i><div>Usuarios</div>
+              </a>
+            </li>
+          </ul>
+        </aside>
+        <!-- / MENU -->
+
+        <div class="layout-page">
+          <!-- NAVBAR -->
+          <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block" id="nav-user-name">Usuario</span>
+                            <small class="text-muted" id="nav-user-role">Rol</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li><div class="dropdown-divider"></div></li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0)" onclick="Auth.logout()">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Cerrar Sesion</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <!-- / NAVBAR -->
+
+          <!-- CONTENIDO -->
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+
+              <!-- Cabecera de pagina -->
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                  <h4 class="fw-bold mb-0">
+                    <i class="bx bx-file me-1 text-primary"></i> Suscripciones
+                  </h4>
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0 mt-1">
+                      <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                      <li class="breadcrumb-item active">Suscripciones</li>
+                    </ol>
+                  </nav>
+                </div>
+                <button class="btn btn-primary" id="btn-nuevo" onclick="window.suscripcionModule.abrirModalNuevo()">
+                  <i class="bx bx-plus me-1"></i> Nueva Suscripcion
+                </button>
+              </div>
+
+              <!-- Alerta global -->
+              <div id="alerta-global" class="alert d-none mb-3" role="alert"></div>
+
+              <!-- Filtros rapidos -->
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <button class="btn btn-sm btn-outline-secondary active" id="filtro-todos" onclick="window.suscripcionModule.filtrarEstado('')">Todos</button>
+                <button class="btn btn-sm btn-outline-success" id="filtro-activo" onclick="window.suscripcionModule.filtrarEstado('ACTIVO')">
+                  <i class="bx bx-check-circle me-1"></i>Activos
+                </button>
+                <button class="btn btn-sm btn-outline-warning" id="filtro-vencido" onclick="window.suscripcionModule.filtrarEstado('VENCIDO')">
+                  <i class="bx bx-time me-1"></i>Vencidos
+                </button>
+                <button class="btn btn-sm btn-outline-danger" id="filtro-cancelado" onclick="window.suscripcionModule.filtrarEstado('CANCELADO')">
+                  <i class="bx bx-x-circle me-1"></i>Cancelados
+                </button>
+              </div>
+
+              <!-- Tarjeta tabla -->
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center py-3">
+                  <h6 class="mb-0">Listado de Suscripciones</h6>
+                  <div class="w-50">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text"><i class="bx bx-search"></i></span>
+                      <input type="text" id="input-buscar" class="form-control" placeholder="Buscar por cliente o plan..." />
+                    </div>
+                  </div>
+                </div>
+                <div class="table-responsive text-nowrap">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Plan</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                        <th>Tipo Pago</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tabla-body">
+                      <tr>
+                        <td colspan="8" class="text-center py-5">
+                          <div class="spinner-border text-primary" role="status"></div>
+                          <p class="mt-2 text-muted mb-0">Cargando suscripciones...</p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center py-2">
+                  <span class="text-muted small" id="footer-total"></span>
+                </div>
+              </div>
+
+            </div>
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- / CONTENIDO -->
+        </div>
+      </div>
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+
+    <!-- ===== MODAL CREAR / EDITAR ===== -->
+    <div class="modal fade" id="modal-suscripcion" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-titulo">Nueva Suscripcion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="alerta-modal" class="alert alert-danger d-none mb-3" role="alert"></div>
+            <!-- Spinner de carga de selects -->
+            <div id="modal-loading" class="text-center py-3">
+              <div class="spinner-border text-primary spinner-border-sm" role="status"></div>
+              <span class="ms-2 text-muted">Cargando datos...</span>
+            </div>
+            <form id="form-suscripcion" novalidate style="display:none">
+              <input type="hidden" id="f-id" />
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Cliente <span class="text-danger">*</span></label>
+                <select class="form-select" id="f-id_cliente">
+                  <option value="">-- Seleccione un cliente --</option>
+                </select>
+                <div class="invalid-feedback">Seleccione un cliente.</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Plan <span class="text-danger">*</span></label>
+                <select class="form-select" id="f-id_plan">
+                  <option value="">-- Seleccione un plan --</option>
+                </select>
+                <div class="invalid-feedback">Seleccione un plan.</div>
+              </div>
+              <div class="row g-3 mb-3">
+                <div class="col-6">
+                  <label class="form-label fw-semibold">Fecha Inicio <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="f-fecha_inicio" />
+                  <div class="invalid-feedback">Campo requerido.</div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label fw-semibold">Fecha Fin <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="f-fecha_fin" />
+                  <div class="invalid-feedback">Campo requerido.</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Tipo de Pago <span class="text-danger">*</span></label>
+                <select class="form-select" id="f-tipo_pago">
+                  <option value="">-- Seleccione --</option>
+                  <option value="MENSUAL">MENSUAL</option>
+                  <option value="ANUAL">ANUAL</option>
+                  <option value="LICENCIA">LICENCIA</option>
+                </select>
+                <div class="invalid-feedback">Seleccione un tipo de pago.</div>
+              </div>
+              <div class="mb-1" id="campo-estado" style="display:none">
+                <label class="form-label fw-semibold">Estado</label>
+                <select class="form-select" id="f-estado">
+                  <option value="ACTIVO">ACTIVO</option>
+                  <option value="VENCIDO">VENCIDO</option>
+                  <option value="CANCELADO">CANCELADO</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btn-guardar" onclick="window.suscripcionModule.guardar()">
+              <span id="btn-guardar-spinner" class="spinner-border spinner-border-sm me-1 d-none" role="status"></span>
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MODAL CONFIRMAR CANCELAR ===== -->
+    <div class="modal fade" id="modal-cancelar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-body text-center p-4">
+            <div class="avatar avatar-xl bg-label-danger mb-3 mx-auto">
+              <i class="bx bx-x-circle bx-lg text-danger"></i>
+            </div>
+            <h6 class="mb-1">Cancelar suscripcion</h6>
+            <p class="text-muted small mb-3">
+              La suscripcion del cliente "<strong id="cancelar-nombre"></strong>" sera marcada como CANCELADO.
+            </p>
+          </div>
+          <div class="modal-footer justify-content-center pt-0">
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Volver</button>
+            <button type="button" class="btn btn-danger btn-sm" id="btn-confirmar-cancelar">
+              <span id="btn-cancelar-spinner" class="spinner-border spinner-border-sm me-1 d-none" role="status"></span>
+              Si, cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts core -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../assets/vendor/js/menu.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../dist/suscripciones.js"></script>
+  </body>
+</html>

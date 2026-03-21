@@ -1,0 +1,27 @@
+{
+    "name": "sysmanager/backend",
+    "description": "Backend API REST - Sistema de Suscripciones",
+    "type": "project",
+    "require": {
+        "php": "^7.4",
+        "firebase/php-jwt": "^6.4"
+    },
+    "autoload": {
+        "classmap": [
+            "config/",
+            "helpers/",
+            "models/",
+            "controllers/",
+            "middleware/"
+        ]
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "optimize-autoloader": true,
+        "audit": {
+            "ignore": {
+                "PKSA-y2cr-5h3j-g3ys": "firebase/php-jwt entorno local de desarrollo"
+            }
+        }
+    }
+}
