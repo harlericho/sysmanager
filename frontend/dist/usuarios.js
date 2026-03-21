@@ -19,8 +19,12 @@ window.usuarioModule = (function () {
     if (menuAdmin) menuAdmin.style.display = "";
     if (menuUsuarios) menuUsuarios.style.display = "";
 
-    modalUsuario = new bootstrap.Modal(document.getElementById("modal-usuario"));
-    modalDesactivar = new bootstrap.Modal(document.getElementById("modal-desactivar"));
+    modalUsuario = new bootstrap.Modal(
+      document.getElementById("modal-usuario"),
+    );
+    modalDesactivar = new bootstrap.Modal(
+      document.getElementById("modal-desactivar"),
+    );
 
     document
       .getElementById("modal-usuario")
@@ -35,17 +39,19 @@ window.usuarioModule = (function () {
       .addEventListener("input", filtrarTabla);
 
     // Toggle ver/ocultar password
-    document.getElementById("btn-ver-password").addEventListener("click", function () {
-      var inp = document.getElementById("f-password");
-      var ico = document.getElementById("ico-ojo");
-      if (inp.type === "password") {
-        inp.type = "text";
-        ico.className = "bx bx-show";
-      } else {
-        inp.type = "password";
-        ico.className = "bx bx-hide";
-      }
-    });
+    document
+      .getElementById("btn-ver-password")
+      .addEventListener("click", function () {
+        var inp = document.getElementById("f-password");
+        var ico = document.getElementById("ico-ojo");
+        if (inp.type === "password") {
+          inp.type = "text";
+          ico.className = "bx bx-show";
+        } else {
+          inp.type = "password";
+          ico.className = "bx bx-hide";
+        }
+      });
 
     cargarTabla();
   });
@@ -87,7 +93,9 @@ window.usuarioModule = (function () {
       return;
     }
 
-    var admins = lista.filter(function (u) { return u.rol === "ADMIN"; }).length;
+    var admins = lista.filter(function (u) {
+      return u.rol === "ADMIN";
+    }).length;
     footer.textContent =
       lista.length + " registro(s) — " + admins + " admin(s)";
 
@@ -117,19 +125,32 @@ window.usuarioModule = (function () {
           !esSelf && u.estado === "A"
             ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Desactivar" onclick="window.usuarioModule.confirmarDesactivar(' +
               u.id +
-              ", " +
-              JSON.stringify(u.nombres) +
               ')"><i class="bx bx-user-minus"></i></button>'
             : "";
 
         return (
           "<tr>" +
-          '<td><span class="text-muted small">' + (i + 1) + "</span></td>" +
-          '<td><span class="fw-semibold">' + escapeHtml(u.nombres) + "</span>" + selfLabel + "</td>" +
-          "<td><code>" + escapeHtml(u.usuario) + "</code></td>" +
-          "<td>" + rolBadge + "</td>" +
-          "<td>" + estadoBadge + "</td>" +
-          '<td class="text-center">' + btnEditar + btnDesactivar + "</td>" +
+          '<td><span class="text-muted small">' +
+          (i + 1) +
+          "</span></td>" +
+          '<td><span class="fw-semibold">' +
+          escapeHtml(u.nombres) +
+          "</span>" +
+          selfLabel +
+          "</td>" +
+          "<td><code>" +
+          escapeHtml(u.usuario) +
+          "</code></td>" +
+          "<td>" +
+          rolBadge +
+          "</td>" +
+          "<td>" +
+          estadoBadge +
+          "</td>" +
+          '<td class="text-center">' +
+          btnEditar +
+          btnDesactivar +
+          "</td>" +
           "</tr>"
         );
       })
@@ -139,10 +160,7 @@ window.usuarioModule = (function () {
   // ─── Busqueda local ───────────────────────────────────────────────────────────
 
   function filtrarTabla() {
-    var q = document
-      .getElementById("input-buscar")
-      .value.toLowerCase()
-      .trim();
+    var q = document.getElementById("input-buscar").value.toLowerCase().trim();
     if (!q) {
       renderTabla(todosLosUsuarios);
       return;
@@ -185,11 +203,16 @@ window.usuarioModule = (function () {
         document.getElementById("f-usuario").value = u.usuario || "";
         document.getElementById("f-rol").value = u.rol || "";
         var estadoVal = u.estado === "I" ? "I" : "A";
-        document.querySelector('input[name="estado"][value="' + estadoVal + '"]').checked = true;
+        document.querySelector(
+          'input[name="estado"][value="' + estadoVal + '"]',
+        ).checked = true;
         document.getElementById("campo-estado").style.display = "";
       })
       .catch(function (err) {
-        mostrarAlertaModal("danger", err.mensaje || err.error || "Error al cargar los datos del usuario.");
+        mostrarAlertaModal(
+          "danger",
+          err.mensaje || err.error || "Error al cargar los datos del usuario.",
+        );
       })
       .finally(function () {
         document.getElementById("btn-guardar").disabled = false;
@@ -212,13 +235,23 @@ window.usuarioModule = (function () {
     });
 
     var valido = true;
-    if (!nombres) { document.getElementById("f-nombres").classList.add("is-invalid"); valido = false; }
-    if (!usuario) { document.getElementById("f-usuario").classList.add("is-invalid"); valido = false; }
-    if (!rol)     { document.getElementById("f-rol").classList.add("is-invalid");     valido = false; }
+    if (!nombres) {
+      document.getElementById("f-nombres").classList.add("is-invalid");
+      valido = false;
+    }
+    if (!usuario) {
+      document.getElementById("f-usuario").classList.add("is-invalid");
+      valido = false;
+    }
+    if (!rol) {
+      document.getElementById("f-rol").classList.add("is-invalid");
+      valido = false;
+    }
     if (!id && !password) {
       // En creacion la password es obligatoria
       document.getElementById("f-password").classList.add("is-invalid");
-      document.getElementById("password-feedback").textContent = "La contrasena es requerida.";
+      document.getElementById("password-feedback").textContent =
+        "La contrasena es requerida.";
       valido = false;
     }
     if (!valido) return;
@@ -229,7 +262,9 @@ window.usuarioModule = (function () {
       rol: rol,
     };
     if (id) {
-      payload.estado = document.querySelector('input[name="estado"]:checked').value;
+      payload.estado = document.querySelector(
+        'input[name="estado"]:checked',
+      ).value;
       if (password) payload.password = password;
     } else {
       payload.password = password;
@@ -247,11 +282,17 @@ window.usuarioModule = (function () {
     peticion
       .then(function (resp) {
         modalUsuario.hide();
-        mostrarAlertaGlobal("success", resp.mensaje || "Operacion realizada con exito.");
+        mostrarAlertaGlobal(
+          "success",
+          resp.mensaje || "Operacion realizada con exito.",
+        );
         cargarTabla();
       })
       .catch(function (err) {
-        mostrarAlertaModal("danger", err.mensaje || err.error || "No se pudo guardar el usuario.");
+        mostrarAlertaModal(
+          "danger",
+          err.mensaje || err.error || "No se pudo guardar el usuario.",
+        );
       })
       .finally(function () {
         spinner.classList.add("d-none");
@@ -261,9 +302,14 @@ window.usuarioModule = (function () {
 
   // ─── Desactivar ───────────────────────────────────────────────────────────────
 
-  function confirmarDesactivar(id, nombre) {
+  function confirmarDesactivar(id) {
     idDesactivar = id;
-    document.getElementById("desactivar-nombre").textContent = nombre;
+    var usuario = todosLosUsuarios.find(function (u) {
+      return u.id == id;
+    });
+    document.getElementById("desactivar-nombre").textContent = usuario
+      ? usuario.nombres
+      : "este usuario";
     modalDesactivar.show();
   }
 
@@ -278,13 +324,21 @@ window.usuarioModule = (function () {
     api
       .delete("/usuarios/" + idDesactivar)
       .then(function (resp) {
+        if (!resp) return;
         modalDesactivar.hide();
-        mostrarAlertaGlobal("warning", resp.mensaje || "Usuario desactivado correctamente.");
+        mostrarAlertaGlobal(
+          "warning",
+          resp.mensaje || "Usuario desactivado correctamente.",
+        );
         cargarTabla();
       })
       .catch(function (err) {
         modalDesactivar.hide();
-        mostrarAlertaGlobal("danger", err.mensaje || err.error || "No se pudo desactivar el usuario.");
+        mostrarAlertaGlobal(
+          "danger",
+          (err && (err.mensaje || err.error)) ||
+            "No se pudo desactivar el usuario.",
+        );
       })
       .finally(function () {
         spinner.classList.add("d-none");
@@ -297,15 +351,22 @@ window.usuarioModule = (function () {
 
   function mostrarAlertaGlobal(tipo, msg) {
     var el = document.getElementById("alerta-global");
+    if (!el) return;
     el.className = "alert alert-" + tipo + " alert-dismissible fade show";
     el.innerHTML =
       '<i class="bx ' +
-      (tipo === "success" ? "bx-check-circle" : tipo === "warning" ? "bx-bell" : "bx-error-circle") +
+      (tipo === "success"
+        ? "bx-check-circle"
+        : tipo === "warning"
+          ? "bx-bell"
+          : "bx-error-circle") +
       ' me-2"></i>' +
       escapeHtml(msg) +
       '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
     clearTimeout(el._t);
-    el._t = setTimeout(function () { el.className = "alert d-none"; }, 4000);
+    el._t = setTimeout(function () {
+      el.className = "alert d-none";
+    }, 4000);
   }
 
   function mostrarAlertaModal(tipo, msg) {
@@ -319,7 +380,8 @@ window.usuarioModule = (function () {
   function limpiarModal() {
     document.getElementById("form-usuario").reset();
     document.getElementById("f-id").value = "";
-    document.getElementById("alerta-modal").className = "alert alert-danger d-none";
+    document.getElementById("alerta-modal").className =
+      "alert alert-danger d-none";
     ["f-nombres", "f-usuario", "f-rol", "f-password"].forEach(function (fid) {
       document.getElementById(fid).classList.remove("is-invalid");
     });
@@ -329,7 +391,8 @@ window.usuarioModule = (function () {
     // Restaurar password a tipo password y ocultar
     document.getElementById("f-password").type = "password";
     document.getElementById("ico-ojo").className = "bx bx-hide";
-    document.getElementById("password-feedback").textContent = "Este campo es requerido.";
+    document.getElementById("password-feedback").textContent =
+      "Este campo es requerido.";
   }
 
   // ─── Utilidades ───────────────────────────────────────────────────────────────

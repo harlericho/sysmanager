@@ -33,10 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
       '<span class="spinner-border spinner-border-sm me-1"></span> Iniciando...';
 
     try {
-      var data = await api.post("/auth/login", {
-        usuario: usuario,
-        password: password,
+      // Usamos fetch directo para que un 401 (credenciales inválidas)
+      // no active el redirect global de apiRequest().
+      var res = await fetch(API_BASE + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario: usuario, password: password }),
       });
+      var data = await res.json();
+      if (!res.ok) throw data;
       Auth.setSession(data.token, data.usuario);
       // replace() evita que el botón "atrás" regrese al login
       window.location.replace("index.html");

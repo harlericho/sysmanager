@@ -121,8 +121,6 @@ window.suscripcionModule = (function () {
           s.estado !== "CANCELADO"
             ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Cancelar" onclick="window.suscripcionModule.confirmarCancelar(' +
               s.id +
-              ", " +
-              JSON.stringify(s.nombre_empresa) +
               ')"><i class="bx bx-x-circle"></i></button>'
             : "";
 
@@ -405,9 +403,14 @@ window.suscripcionModule = (function () {
 
   // ─── Cancelar suscripcion ─────────────────────────────────────────────────────
 
-  function confirmarCancelar(id, nombreEmpresa) {
+  function confirmarCancelar(id) {
     idCancelar = id;
-    document.getElementById("cancelar-nombre").textContent = nombreEmpresa;
+    var sus = todasLasSuscripciones.find(function (s) {
+      return s.id == id;
+    });
+    document.getElementById("cancelar-nombre").textContent = sus
+      ? sus.nombre_empresa
+      : "esta suscripcion";
     modalCancelar.show();
   }
 
@@ -422,6 +425,7 @@ window.suscripcionModule = (function () {
     api
       .delete("/suscripciones/" + idCancelar)
       .then(function (resp) {
+        if (!resp) return;
         modalCancelar.hide();
         mostrarAlertaGlobal(
           "warning",
@@ -433,7 +437,7 @@ window.suscripcionModule = (function () {
         modalCancelar.hide();
         mostrarAlertaGlobal(
           "danger",
-          err.mensaje || err.error || "No se pudo cancelar.",
+          (err && (err.mensaje || err.error)) || "No se pudo cancelar.",
         );
       })
       .finally(function () {
@@ -447,6 +451,7 @@ window.suscripcionModule = (function () {
 
   function mostrarAlertaGlobal(tipo, msg) {
     const el = document.getElementById("alerta-global");
+    if (!el) return;
     el.className = "alert alert-" + tipo + " alert-dismissible fade show";
     el.innerHTML =
       '<i class="bx ' +

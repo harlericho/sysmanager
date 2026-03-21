@@ -19,8 +19,12 @@ window.clienteModule = (function () {
       if (menuUsuarios) menuUsuarios.style.display = "";
     }
 
-    modalCliente = new bootstrap.Modal(document.getElementById("modal-cliente"));
-    modalEliminar = new bootstrap.Modal(document.getElementById("modal-eliminar"));
+    modalCliente = new bootstrap.Modal(
+      document.getElementById("modal-cliente"),
+    );
+    modalEliminar = new bootstrap.Modal(
+      document.getElementById("modal-eliminar"),
+    );
 
     document
       .getElementById("modal-cliente")
@@ -56,7 +60,7 @@ window.clienteModule = (function () {
         tbody.innerHTML =
           '<tr><td colspan="7" class="text-center py-4 text-danger">' +
           '<i class="bx bx-error-circle bx-md"></i>' +
-          "<p class=\"mb-0 mt-2\">Error al cargar los clientes: " +
+          '<p class="mb-0 mt-2">Error al cargar los clientes: ' +
           (err.message || "Error desconocido") +
           "</p></td></tr>";
       });
@@ -78,10 +82,7 @@ window.clienteModule = (function () {
       return c.estado === "A";
     }).length;
     footer.textContent =
-      clientes.length +
-      " registro(s) — " +
-      activos +
-      " activo(s)";
+      clientes.length + " registro(s) — " + activos + " activo(s)";
 
     tbody.innerHTML = clientes
       .map(function (c, i) {
@@ -100,17 +101,15 @@ window.clienteModule = (function () {
           Auth.esAdmin() && c.estado === "A"
             ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Desactivar" onclick="window.clienteModule.confirmarEliminar(' +
               c.id +
-              ', ' +
-              JSON.stringify(c.nombre_empresa) +
               ')"><i class="bx bx-user-minus"></i></button>'
             : "";
 
         return (
           "<tr>" +
-          "<td><span class=\"text-muted small\">" +
+          '<td><span class="text-muted small">' +
           (i + 1) +
           "</span></td>" +
-          "<td><span class=\"fw-semibold\">" +
+          '<td><span class="fw-semibold">' +
           escapeHtml(c.nombre_empresa) +
           "</span></td>" +
           "<td>" +
@@ -118,11 +117,17 @@ window.clienteModule = (function () {
           "</td>" +
           "<td>" +
           (c.email
-            ? '<a href="mailto:' + escapeHtml(c.email) + '">' + escapeHtml(c.email) + "</a>"
+            ? '<a href="mailto:' +
+              escapeHtml(c.email) +
+              '">' +
+              escapeHtml(c.email) +
+              "</a>"
             : '<span class="text-muted">—</span>') +
           "</td>" +
           "<td>" +
-          (c.telefono ? escapeHtml(c.telefono) : '<span class="text-muted">—</span>') +
+          (c.telefono
+            ? escapeHtml(c.telefono)
+            : '<span class="text-muted">—</span>') +
           "</td>" +
           "<td>" +
           estadoBadge +
@@ -179,17 +184,23 @@ window.clienteModule = (function () {
       .get("/clientes/" + id)
       .then(function (c) {
         document.getElementById("f-id").value = c.id;
-        document.getElementById("f-nombre_empresa").value = c.nombre_empresa || "";
+        document.getElementById("f-nombre_empresa").value =
+          c.nombre_empresa || "";
         document.getElementById("f-ruc").value = c.ruc || "";
         document.getElementById("f-telefono").value = c.telefono || "";
         document.getElementById("f-email").value = c.email || "";
         document.getElementById("f-usuario").value = c.usuario || "";
         const estadoVal = c.estado === "I" ? "I" : "A";
-        document.querySelector('input[name="estado"][value="' + estadoVal + '"]').checked = true;
+        document.querySelector(
+          'input[name="estado"][value="' + estadoVal + '"]',
+        ).checked = true;
         document.getElementById("campo-estado").style.display = "";
       })
       .catch(function (err) {
-        mostrarAlertaModal("danger", err.mensaje || err.error || "Error al cargar los datos del cliente.");
+        mostrarAlertaModal(
+          "danger",
+          err.mensaje || err.error || "Error al cargar los datos del cliente.",
+        );
       })
       .finally(function () {
         document.getElementById("btn-guardar").disabled = false;
@@ -202,7 +213,9 @@ window.clienteModule = (function () {
 
   function guardar() {
     const id = document.getElementById("f-id").value;
-    const nombreEmpresa = document.getElementById("f-nombre_empresa").value.trim();
+    const nombreEmpresa = document
+      .getElementById("f-nombre_empresa")
+      .value.trim();
 
     const inputNombre = document.getElementById("f-nombre_empresa");
     inputNombre.classList.remove("is-invalid");
@@ -222,7 +235,9 @@ window.clienteModule = (function () {
     };
 
     if (id) {
-      payload.estado = document.querySelector('input[name="estado"]:checked').value;
+      payload.estado = document.querySelector(
+        'input[name="estado"]:checked',
+      ).value;
     }
 
     const spinner = document.getElementById("btn-guardar-spinner");
@@ -237,11 +252,17 @@ window.clienteModule = (function () {
     peticion
       .then(function (resp) {
         modalCliente.hide();
-        mostrarAlertaGlobal("success", resp.mensaje || "Operacion realizada con exito.");
+        mostrarAlertaGlobal(
+          "success",
+          resp.mensaje || "Operacion realizada con exito.",
+        );
         cargarTabla();
       })
       .catch(function (err) {
-        mostrarAlertaModal("danger", err.mensaje || err.error || "No se pudo guardar el cliente.");
+        mostrarAlertaModal(
+          "danger",
+          err.mensaje || err.error || "No se pudo guardar el cliente.",
+        );
       })
       .finally(function () {
         spinner.classList.add("d-none");
@@ -251,9 +272,14 @@ window.clienteModule = (function () {
 
   // ─── Eliminar (desactivar) ─────────────────────────────────────────────────────
 
-  function confirmarEliminar(id, nombre) {
+  function confirmarEliminar(id) {
     idEliminar = id;
-    document.getElementById("eliminar-nombre").textContent = nombre;
+    var cliente = todosLosClientes.find(function (c) {
+      return c.id == id;
+    });
+    document.getElementById("eliminar-nombre").textContent = cliente
+      ? cliente.nombre_empresa
+      : "este cliente";
     modalEliminar.show();
   }
 
@@ -268,13 +294,21 @@ window.clienteModule = (function () {
     api
       .delete("/clientes/" + idEliminar)
       .then(function (resp) {
+        if (!resp) return; // navegación por 401 en curso
         modalEliminar.hide();
-        mostrarAlertaGlobal("warning", resp.mensaje || "Cliente desactivado correctamente.");
+        mostrarAlertaGlobal(
+          "warning",
+          resp.mensaje || "Cliente desactivado correctamente.",
+        );
         cargarTabla();
       })
       .catch(function (err) {
         modalEliminar.hide();
-        mostrarAlertaGlobal("danger", err.mensaje || err.error || "No se pudo desactivar el cliente.");
+        mostrarAlertaGlobal(
+          "danger",
+          (err && (err.mensaje || err.error)) ||
+            "No se pudo desactivar el cliente.",
+        );
       })
       .finally(function () {
         spinner.classList.add("d-none");
@@ -287,10 +321,15 @@ window.clienteModule = (function () {
 
   function mostrarAlertaGlobal(tipo, msg) {
     const el = document.getElementById("alerta-global");
+    if (!el) return;
     el.className = "alert alert-" + tipo + " alert-dismissible fade show";
     el.innerHTML =
       '<i class="bx ' +
-      (tipo === "success" ? "bx-check-circle" : tipo === "warning" ? "bx-bell" : "bx-error-circle") +
+      (tipo === "success"
+        ? "bx-check-circle"
+        : tipo === "warning"
+          ? "bx-bell"
+          : "bx-error-circle") +
       ' me-2"></i>' +
       escapeHtml(msg) +
       '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
@@ -311,7 +350,8 @@ window.clienteModule = (function () {
   function limpiarModal() {
     document.getElementById("form-cliente").reset();
     document.getElementById("f-id").value = "";
-    document.getElementById("alerta-modal").className = "alert alert-danger d-none";
+    document.getElementById("alerta-modal").className =
+      "alert alert-danger d-none";
     document.getElementById("f-nombre_empresa").classList.remove("is-invalid");
     document.getElementById("campo-estado").style.display = "none";
     document.getElementById("btn-guardar").disabled = false;

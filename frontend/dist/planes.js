@@ -123,8 +123,6 @@ window.planModule = (function () {
             (p.estado === "A"
               ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Desactivar" onclick="window.planModule.confirmarEliminar(' +
                 p.id +
-                ", " +
-                JSON.stringify(p.nombre) +
                 ')"><i class="bx bx-minus-circle"></i></button>'
               : "") +
             "</td>"
@@ -304,9 +302,14 @@ window.planModule = (function () {
 
   // ─── Eliminar (desactivar) ────────────────────────────────────────────────────
 
-  function confirmarEliminar(id, nombre) {
+  function confirmarEliminar(id) {
     idEliminar = id;
-    document.getElementById("eliminar-nombre").textContent = nombre;
+    var plan = todosLosPlanes.find(function (p) {
+      return p.id == id;
+    });
+    document.getElementById("eliminar-nombre").textContent = plan
+      ? plan.nombre
+      : "este plan";
     modalEliminar.show();
   }
 
@@ -321,6 +324,7 @@ window.planModule = (function () {
     api
       .delete("/planes/" + idEliminar)
       .then(function (resp) {
+        if (!resp) return;
         modalEliminar.hide();
         mostrarAlertaGlobal(
           "warning",
@@ -332,7 +336,8 @@ window.planModule = (function () {
         modalEliminar.hide();
         mostrarAlertaGlobal(
           "danger",
-          err.mensaje || err.error || "No se pudo desactivar el plan.",
+          (err && (err.mensaje || err.error)) ||
+            "No se pudo desactivar el plan.",
         );
       })
       .finally(function () {
@@ -346,6 +351,7 @@ window.planModule = (function () {
 
   function mostrarAlertaGlobal(tipo, msg) {
     const el = document.getElementById("alerta-global");
+    if (!el) return;
     el.className = "alert alert-" + tipo + " alert-dismissible fade show";
     el.innerHTML =
       '<i class="bx ' +
