@@ -2,7 +2,12 @@
 
 "use strict";
 
-const API_BASE = "http://localhost:8000"; // cambia a http://localhost/sysmanager/backend/public si usas Laragon/Apache
+// DESARROLLO LOCAL (php -S):
+// const API_BASE = "http://localhost:8000";
+// LARAGON / WAMP local:
+// const API_BASE = "http://localhost/sysmanager/backend/public";
+// PRODUCCIÓN HOSTINGER:
+const API_BASE = "https://solucionesitec.com/sysmanager/backend/public";
 
 // ================================
 // Auth helpers
@@ -84,3 +89,14 @@ function renderNavUser() {
 
 // Ejecutar al cargar
 document.addEventListener("DOMContentLoaded", renderNavUser);
+
+// Protección contra bfcache: cuando el navegador restaura una página
+// desde el historial (botón "atrás") sin volver a ejecutar los scripts,
+// pageshow con e.persisted=true es el único evento que se dispara.
+window.addEventListener("pageshow", function (e) {
+  if (e.persisted && !Auth.getToken()) {
+    // La sesión ya no existe → ocultar y redirigir
+    document.documentElement.style.visibility = "hidden";
+    window.location.replace("login.html");
+  }
+});
