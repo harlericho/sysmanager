@@ -97,6 +97,11 @@ window.clienteModule = (function () {
             ')"><i class="bx bx-edit"></i></button>'
           : "";
 
+        const btnHistorial =
+          '<a href="historial.html?id=' +
+          c.id +
+          '" class="btn btn-sm btn-icon btn-outline-secondary me-1" title="Ver historial de pagos"><i class="bx bx-history"></i></a>';
+
         const btnEliminar =
           Auth.esAdmin() && c.estado === "A"
             ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Desactivar" onclick="window.clienteModule.confirmarEliminar(' +
@@ -134,6 +139,7 @@ window.clienteModule = (function () {
           "</td>" +
           '<td class="text-center">' +
           btnEditar +
+          btnHistorial +
           btnEliminar +
           "</td>" +
           "</tr>"
