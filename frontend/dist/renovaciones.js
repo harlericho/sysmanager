@@ -209,7 +209,7 @@ window.renovacionModule = (function () {
 
     cargarSelectSuscripciones()
       .then(function () {
-        const hoy = new Date().toISOString().slice(0, 10);
+        const hoy = fechaLocalHoy();
         document.getElementById("f-fecha_inicio").value = hoy;
       })
       .catch(function () {
@@ -437,6 +437,17 @@ window.renovacionModule = (function () {
   }
 
   // ─── Utilidades ───────────────────────────────────────────────────────────────
+
+  function fechaLocalHoy() {
+    var d = new Date();
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
 
   function formatFecha(f) {
     if (!f) return '<span class="text-muted">—</span>';

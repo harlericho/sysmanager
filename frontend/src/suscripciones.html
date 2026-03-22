@@ -317,6 +317,7 @@
                         <th>#</th>
                         <th>Cliente</th>
                         <th>Plan</th>
+                        <th>Costo Inst.</th>
                         <th>Inicio</th>
                         <th>Fin</th>
                         <th>Tipo Pago</th>
@@ -326,7 +327,7 @@
                     </thead>
                     <tbody id="tabla-body">
                       <tr>
-                        <td colspan="8" class="text-center py-5">
+                        <td colspan="9" class="text-center py-5">
                           <div
                             class="spinner-border text-primary"
                             role="status"
@@ -426,6 +427,30 @@
                   <option value="">-- Seleccione un plan --</option>
                 </select>
                 <div class="invalid-feedback">Seleccione un plan.</div>
+              </div>
+              <div
+                id="campo-precio-instalacion"
+                class="mb-3"
+                style="display: none"
+              >
+                <label class="form-label fw-semibold"
+                  >Costo Instalación
+                  <span class="text-muted small">(solo LOCAL)</span></label
+                >
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="f-precio_instalacion"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                </div>
+                <div class="form-text text-muted">
+                  Pago único por instalación del sistema local.
+                </div>
               </div>
               <div class="row g-3 mb-3">
                 <div class="col-6">

@@ -7,6 +7,7 @@ window.suscripcionModule = (function () {
   let idCancelar = null;
   let todasLasSuscripciones = [];
   let filtroActivoEstado = "";
+  let planesCache = [];
 
   // ─── Inicializar ──────────────────────────────────────────────────────────────
 
@@ -47,7 +48,7 @@ window.suscripcionModule = (function () {
   function cargarTabla() {
     const tbody = document.getElementById("tabla-body");
     tbody.innerHTML =
-      '<tr><td colspan="8" class="text-center py-5">' +
+      '<tr><td colspan="9" class="text-center py-5">' +
       '<div class="spinner-border text-primary" role="status"></div>' +
       '<p class="mt-2 text-muted mb-0">Cargando suscripciones...</p></td></tr>';
 
@@ -59,7 +60,7 @@ window.suscripcionModule = (function () {
       })
       .catch(function (err) {
         tbody.innerHTML =
-          '<tr><td colspan="8" class="text-center py-4 text-danger">' +
+          '<tr><td colspan="9" class="text-center py-4 text-danger">' +
           '<i class="bx bx-error-circle bx-md"></i>' +
           '<p class="mb-0 mt-2">Error al cargar: ' +
           (err.message || "Error desconocido") +
@@ -73,7 +74,7 @@ window.suscripcionModule = (function () {
 
     if (!lista || lista.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="8" class="text-center py-5 text-muted">' +
+        '<tr><td colspan="9" class="text-center py-5 text-muted">' +
         '<i class="bx bx-inbox bx-lg mb-2 d-block"></i>No se encontraron suscripciones.</td></tr>';
       footer.textContent = "0 registros";
       return;
@@ -107,7 +108,7 @@ window.suscripcionModule = (function () {
             escapeHtml(s.tipo_pago) +
             "</span>";
 
-        const hoy = new Date().toISOString().slice(0, 10);
+        const hoy = fechaLocalHoy();
         const estaVenciendo =
           s.estado === "ACTIVO" && s.fecha_fin && s.fecha_fin <= hoy;
         const filaClass = estaVenciendo ? ' class="table-warning"' : "";
@@ -124,6 +125,13 @@ window.suscripcionModule = (function () {
               ')"><i class="bx bx-x-circle"></i></button>'
             : "";
 
+        const costoCelda =
+          s.tipo_plan === "LOCAL" && parseFloat(s.precio_instalacion) > 0
+            ? '<span class="fw-semibold text-success">$' +
+              parseFloat(s.precio_instalacion).toFixed(2) +
+              "</span>"
+            : '<span class="text-muted">—</span>';
+
         return (
           "<tr" +
           filaClass +
@@ -136,6 +144,9 @@ window.suscripcionModule = (function () {
           "</span></td>" +
           "<td>" +
           escapeHtml(s.nombre_plan) +
+          "</td>" +
+          "<td>" +
+          costoCelda +
           "</td>" +
           "<td>" +
           formatFecha(s.fecha_inicio) +
@@ -215,6 +226,7 @@ window.suscripcionModule = (function () {
       function (resultados) {
         const clientes = resultados[0];
         const planes = resultados[1];
+        planesCache = planes;
 
         const selCliente = document.getElementById("f-id_cliente");
         selCliente.innerHTML =
@@ -241,12 +253,31 @@ window.suscripcionModule = (function () {
           .forEach(function (p) {
             const opt = document.createElement("option");
             opt.value = p.id;
+            opt.dataset.tipo = p.tipo;
             opt.textContent =
               p.nombre + " (" + p.tipo + " — " + p.duracion_base + " mes)";
             selPlan.appendChild(opt);
           });
+
+        selPlan.removeEventListener("change", actualizarCampoPrecioInstalacion);
+        selPlan.addEventListener("change", actualizarCampoPrecioInstalacion);
       },
     );
+  }
+
+  // ─── Mostrar/ocultar campo precio instalacion ─────────────────────────────────
+
+  function actualizarCampoPrecioInstalacion() {
+    const selPlan = document.getElementById("f-id_plan");
+    const selectedOpt = selPlan.options[selPlan.selectedIndex];
+    const tipoPlan = selectedOpt ? selectedOpt.dataset.tipo || "" : "";
+    const campo = document.getElementById("campo-precio-instalacion");
+    if (tipoPlan === "LOCAL") {
+      campo.style.display = "";
+    } else {
+      campo.style.display = "none";
+      document.getElementById("f-precio_instalacion").value = "";
+    }
   }
 
   // ─── Modal Nuevo ──────────────────────────────────────────────────────────────
@@ -262,7 +293,7 @@ window.suscripcionModule = (function () {
 
     cargarSelects()
       .then(function () {
-        const hoy = new Date().toISOString().slice(0, 10);
+        const hoy = fechaLocalHoy();
         document.getElementById("f-fecha_inicio").value = hoy;
       })
       .catch(function () {
@@ -302,6 +333,12 @@ window.suscripcionModule = (function () {
         document.getElementById("f-tipo_pago").value = s.tipo_pago;
         document.getElementById("f-estado").value = s.estado;
         document.getElementById("campo-estado").style.display = "";
+        actualizarCampoPrecioInstalacion();
+        if (s.tipo_plan === "LOCAL") {
+          document.getElementById("f-precio_instalacion").value = parseFloat(
+            s.precio_instalacion || 0,
+          ).toFixed(2);
+        }
       })
       .catch(function (err) {
         mostrarAlertaModal(
@@ -366,6 +403,14 @@ window.suscripcionModule = (function () {
       fecha_fin: fechaFin,
       tipo_pago: tipoPago,
     };
+
+    const campoPrecio = document.getElementById("campo-precio-instalacion");
+    if (campoPrecio && campoPrecio.style.display !== "none") {
+      const rawPrecio = document.getElementById("f-precio_instalacion").value;
+      payload.precio_instalacion = parseFloat(rawPrecio) || 0;
+    } else {
+      payload.precio_instalacion = 0;
+    }
 
     if (id) {
       payload.estado = document.getElementById("f-estado").value;
@@ -492,6 +537,8 @@ window.suscripcionModule = (function () {
       document.getElementById(fid).classList.remove("is-invalid");
     });
     document.getElementById("campo-estado").style.display = "none";
+    document.getElementById("campo-precio-instalacion").style.display = "none";
+    document.getElementById("f-precio_instalacion").value = "";
     document.getElementById("btn-guardar").disabled = false;
     document.getElementById("btn-guardar-spinner").classList.add("d-none");
     document.getElementById("modal-loading").style.display = "none";
@@ -499,6 +546,17 @@ window.suscripcionModule = (function () {
   }
 
   // ─── Utilidades ───────────────────────────────────────────────────────────────
+
+  function fechaLocalHoy() {
+    var d = new Date();
+    return (
+      d.getFullYear() +
+      "-" +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(d.getDate()).padStart(2, "0")
+    );
+  }
 
   function formatFecha(f) {
     if (!f) return '<span class="text-muted">—</span>';

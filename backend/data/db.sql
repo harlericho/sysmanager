@@ -49,6 +49,7 @@ CREATE TABLE tbl_suscripcion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_plan INT NOT NULL,
+    precio_instalacion DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Costo unico del sistema (solo LOCAL)',
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
     tipo_pago ENUM('MENSUAL','ANUAL','LICENCIA') NOT NULL,
@@ -115,10 +116,11 @@ INSERT INTO tbl_plan (nombre, tipo, duracion_base, precio, permite_renovacion, e
 -- =====================================
 -- SUSCRIPCIONES
 -- =====================================
-INSERT INTO tbl_suscripcion (id_cliente, id_plan, fecha_inicio, fecha_fin, tipo_pago, estado, creado_por) VALUES
-(1, 3, '2026-01-01', '2027-01-01', 'ANUAL',    'ACTIVO',  1),
-(2, 1, '2026-03-01', '2026-04-01', 'MENSUAL',  'ACTIVO',  1),
-(3, 4, '2025-06-01', '2026-06-01', 'ANUAL',    'VENCIDO', 2);
+-- precio_instalacion = 0 para planes NUBE; para LOCAL poner el costo real de instalacion
+INSERT INTO tbl_suscripcion (id_cliente, id_plan, precio_instalacion, fecha_inicio, fecha_fin, tipo_pago, estado, creado_por) VALUES
+(1, 3,    0.00, '2026-01-01', '2027-01-01', 'ANUAL',    'ACTIVO',  1),
+(2, 1,    0.00, '2026-03-01', '2026-04-01', 'MENSUAL',  'ACTIVO',  1),
+(3, 4, 280.00, '2025-06-01', '2026-06-01', 'ANUAL',    'VENCIDO', 2);
 
 -- =====================================
 -- RENOVACIONES
@@ -126,3 +128,11 @@ INSERT INTO tbl_suscripcion (id_cliente, id_plan, fecha_inicio, fecha_fin, tipo_
 INSERT INTO tbl_renovacion (id_suscripcion, fecha_inicio, fecha_fin, meses, precio) VALUES
 (3, '2025-06-01', '2026-06-01', 12, 800.00),
 (3, '2026-06-01', '2027-06-01', 12, 800.00);
+
+-- =======================================================
+-- MIGRACION: para bases existentes ejecutar este ALTER
+-- =======================================================
+-- ALTER TABLE tbl_suscripcion
+--   ADD COLUMN precio_instalacion DECIMAL(10,2) DEFAULT 0.00
+--   COMMENT 'Costo unico del sistema (solo LOCAL)'
+--   AFTER id_plan;
