@@ -19,9 +19,22 @@ const Auth = {
   getUser() {
     return JSON.parse(localStorage.getItem("user") || "null");
   },
+  // Decodifica el payload del JWT (sin verificar firma) y devuelve exp en ms.
+  getTokenExpiry() {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const b64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(atob(b64));
+      return payload.exp ? payload.exp * 1000 : null;
+    } catch (e) {
+      return null;
+    }
+  },
   setSession(token, user) {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
+    scheduleAutoLogout(); // programar expiración automática al iniciar sesión
   },
   clear() {
     localStorage.removeItem("token");
@@ -29,7 +42,6 @@ const Auth = {
   },
   requiereAuth() {
     if (!this.getToken()) {
-      // replace() evita que la página protegida quede en el historial
       window.location.replace("login.html");
     }
   },
@@ -39,10 +51,31 @@ const Auth = {
   },
   logout() {
     this.clear();
-    // replace() borra el dashboard del historial → el botón "atrás" no regresa
     window.location.replace("login.html");
   },
 };
+
+// ================================
+// Auto-logout por expiración del token
+// ================================
+var _autoLogoutTimer = null;
+
+function scheduleAutoLogout() {
+  clearTimeout(_autoLogoutTimer);
+  var exp = Auth.getTokenExpiry();
+  if (!exp) return;
+  var ms = exp - Date.now();
+  if (ms <= 0) {
+    // Ya expiró (ej: página recargada con token vencido)
+    Auth.clear();
+    window.location.replace("login.html");
+    return;
+  }
+  _autoLogoutTimer = setTimeout(function () {
+    Auth.clear();
+    window.location.replace("login.html");
+  }, ms);
+}
 
 // ================================
 // Fetch helper
@@ -88,15 +121,25 @@ function renderNavUser() {
 }
 
 // Ejecutar al cargar
-document.addEventListener("DOMContentLoaded", renderNavUser);
+document.addEventListener("DOMContentLoaded", function () {
+  renderNavUser();
+  scheduleAutoLogout(); // reprogramar si el usuario recargó la página
+});
 
-// Protección contra bfcache: cuando el navegador restaura una página
-// desde el historial (botón "atrás") sin volver a ejecutar los scripts,
-// pageshow con e.persisted=true es el único evento que se dispara.
-window.addEventListener("pageshow", function (e) {
-  if (e.persisted && !Auth.getToken()) {
-    // La sesión ya no existe → ocultar y redirigir
+// ── Protección bfcache (botón "atrás" tras cerrar sesión) ────────────────────
+window.addEventListener("pagehide", function (e) {
+  if (e.persisted) {
+    // Guardar la página en bfcache como invisible para evitar flash
     document.documentElement.style.visibility = "hidden";
+  }
+});
+
+window.addEventListener("pageshow", function (e) {
+  if (!e.persisted) return;
+  if (!Auth.getToken()) {
     window.location.replace("login.html");
+  } else {
+    document.documentElement.style.visibility = "";
+    scheduleAutoLogout(); // reprogramar tras restauración desde bfcache
   }
 });
