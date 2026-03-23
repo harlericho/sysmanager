@@ -45,6 +45,7 @@ $map = [
   'planes'        => 'PlanController',
   'suscripciones' => 'SuscripcionController',
   'renovaciones'  => 'RenovacionController',
+  'licencias'     => 'LicenciaController',
 ];
 
 if (!array_key_exists($resource, $map)) {
@@ -59,6 +60,8 @@ if ($method === 'GET'    && $id === null) {
   $ctrl->show($id, $tokenData);
 } elseif ($method === 'POST' && $id !== null && $action === 'enviar-correo') {
   $ctrl->sendMail($id, $tokenData);
+} elseif ($method === 'POST' && $id !== null && $action === 'regenerar-clave') {
+  $ctrl->regenerarClave($id, $tokenData);
 } elseif ($method === 'POST') {
   $ctrl->store($tokenData);
 } elseif ($method === 'PUT'   && $id !== null) {

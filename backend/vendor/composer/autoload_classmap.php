@@ -21,6 +21,8 @@ return array(
     'Firebase\\JWT\\Key' => $vendorDir . '/firebase/php-jwt/src/Key.php',
     'Firebase\\JWT\\SignatureInvalidException' => $vendorDir . '/firebase/php-jwt/src/SignatureInvalidException.php',
     'JwtHelper' => $baseDir . '/helpers/JwtHelper.php',
+    'LicenciaController' => $baseDir . '/controllers/LicenciaController.php',
+    'LicenciaModel' => $baseDir . '/models/LicenciaModel.php',
     'MailHelper' => $baseDir . '/helpers/MailHelper.php',
     'PHPMailer\\PHPMailer\\DSNConfigurator' => $vendorDir . '/phpmailer/phpmailer/src/DSNConfigurator.php',
     'PHPMailer\\PHPMailer\\Exception' => $vendorDir . '/phpmailer/phpmailer/src/Exception.php',

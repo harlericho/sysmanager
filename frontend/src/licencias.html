@@ -13,7 +13,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
-    <title>Usuarios - SysManager</title>
+    <title>Licencias - SysManager</title>
     <link
       rel="icon"
       type="image/x-icon"
@@ -44,7 +44,7 @@
     />
     <script src="../assets/vendor/js/helpers.js"></script>
     <script src="../assets/js/config.js"></script>
-    <!-- Auth guard: requiere token Y rol ADMIN -->
+    <!-- Auth guard -->
     <script src="../dist/theme.js"></script>
     <script src="../dist/api.js"></script>
     <script>
@@ -52,9 +52,6 @@
         if (!Auth.getToken()) {
           document.documentElement.style.visibility = "hidden";
           window.location.replace("login.html");
-        } else if (!Auth.esAdmin()) {
-          document.documentElement.style.visibility = "hidden";
-          window.location.replace("index.html");
         }
       })();
     </script>
@@ -133,16 +130,20 @@
                 <div>Renovaciones</div>
               </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item active">
               <a href="licencias.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-key"></i>
                 <div>Licencias</div>
               </a>
             </li>
-            <li class="menu-header small text-uppercase" id="menu-admin">
+            <li
+              class="menu-header small text-uppercase"
+              id="menu-admin"
+              style="display: none"
+            >
               <span class="menu-header-text">Administracion</span>
             </li>
-            <li class="menu-item active" id="menu-usuarios">
+            <li class="menu-item" id="menu-usuarios" style="display: none">
               <a href="usuarios.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div>Usuarios</div>
@@ -244,26 +245,27 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               <!-- Cabecera de pagina -->
               <div
-                class="d-flex justify-content-between align-items-center mb-4"
+                class="d-flex align-items-start justify-content-between mb-3"
               >
                 <div>
-                  <h4 class="fw-bold mb-0">
-                    <i class="bx bx-user me-1 text-primary"></i> Usuarios
+                  <h4 class="fw-bold py-3 mb-0">
+                    <i class="bx bx-key me-2 text-primary"></i>Licencias
                   </h4>
                   <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb breadcrumb-style1 mb-0 mt-1">
+                    <ol class="breadcrumb breadcrumb-style1">
                       <li class="breadcrumb-item">
                         <a href="index.html">Dashboard</a>
                       </li>
-                      <li class="breadcrumb-item active">Usuarios</li>
+                      <li class="breadcrumb-item active">Licencias</li>
                     </ol>
                   </nav>
                 </div>
                 <button
                   class="btn btn-primary"
-                  onclick="window.usuarioModule.abrirModalNuevo()"
+                  id="btn-nuevo"
+                  onclick="window.licenciaModule.abrirModalNuevo()"
                 >
-                  <i class="bx bx-plus me-1"></i> Nuevo Usuario
+                  <i class="bx bx-plus me-1"></i> Nueva Licencia
                 </button>
               </div>
 
@@ -279,7 +281,7 @@
                 <div
                   class="card-header d-flex justify-content-between align-items-center py-3"
                 >
-                  <h6 class="mb-0">Listado de Usuarios del Sistema</h6>
+                  <h6 class="mb-0">Listado de Licencias</h6>
                   <div class="w-50">
                     <div class="input-group input-group-sm">
                       <span class="input-group-text"
@@ -289,7 +291,7 @@
                         type="text"
                         id="input-buscar"
                         class="form-control"
-                        placeholder="Buscar por nombre o usuario..."
+                        placeholder="Buscar por cliente o clave..."
                       />
                     </div>
                   </div>
@@ -299,22 +301,25 @@
                     <thead class="table-light">
                       <tr>
                         <th>#</th>
-                        <th>Nombre Completo</th>
-                        <th>Usuario</th>
-                        <th>Rol</th>
+                        <th>Cliente</th>
+                        <th>Suscripcion</th>
+                        <th>Clave Licencia</th>
                         <th>Estado</th>
+                        <th>Emision</th>
+                        <th>Vencimiento</th>
+                        <th>Días rest.</th>
                         <th class="text-center">Acciones</th>
                       </tr>
                     </thead>
                     <tbody id="tabla-body">
                       <tr>
-                        <td colspan="6" class="text-center py-5">
+                        <td colspan="9" class="text-center py-5">
                           <div
                             class="spinner-border text-primary"
                             role="status"
                           ></div>
                           <p class="mt-2 text-muted mb-0">
-                            Cargando usuarios...
+                            Cargando licencias...
                           </p>
                         </td>
                       </tr>
@@ -349,133 +354,63 @@
               </div>
             </footer>
             <!-- / PIE DE PAGINA -->
-            <div class="content-backdrop fade"></div>
           </div>
           <!-- / CONTENIDO -->
         </div>
       </div>
-      <div class="layout-overlay layout-menu-toggle"></div>
     </div>
 
-    <!-- ===== MODAL CREAR / EDITAR ===== -->
-    <div class="modal fade" id="modal-usuario" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
+    <!-- ─── Modal: Nueva Licencia ───────────────────────────────────────────── -->
+    <div
+      class="modal fade"
+      id="modal-licencia"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modal-titulo">Nuevo Usuario</h5>
+            <h5 class="modal-title">Nueva Licencia</h5>
             <button
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
-              aria-label="Close"
             ></button>
           </div>
           <div class="modal-body">
+            <div id="alerta-modal" class="alert alert-danger d-none"></div>
             <div
-              id="alerta-modal"
-              class="alert alert-danger d-none mb-3"
-              role="alert"
-            ></div>
-            <form id="form-usuario" novalidate>
-              <input type="hidden" id="f-id" />
+              id="modal-loading"
+              style="display: none"
+              class="text-center py-4"
+            >
+              <div class="spinner-border text-primary" role="status"></div>
+              <p class="mt-2 text-muted mb-0">Cargando...</p>
+            </div>
+            <form id="form-licencia" style="display: block">
+              <input type="hidden" id="f-id" value="" />
               <div class="mb-3">
                 <label class="form-label fw-semibold"
-                  >Nombre Completo <span class="text-danger">*</span></label
+                  >Suscripcion <span class="text-danger">*</span></label
                 >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="f-nombres"
-                  placeholder="Ej: Juan Lopez"
-                />
-                <div class="invalid-feedback">Este campo es requerido.</div>
-              </div>
-              <div class="row g-3 mb-3">
-                <div class="col-6">
-                  <label class="form-label fw-semibold"
-                    >Usuario <span class="text-danger">*</span></label
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="f-usuario"
-                    placeholder="Ej: jlopez"
-                    autocomplete="off"
-                  />
-                  <div class="invalid-feedback">Este campo es requerido.</div>
-                </div>
-                <div class="col-6">
-                  <label class="form-label fw-semibold"
-                    >Rol <span class="text-danger">*</span></label
-                  >
-                  <select class="form-select" id="f-rol">
-                    <option value="">-- Seleccione --</option>
-                    <option value="ADMIN">ADMIN</option>
-                    <option value="EMPLEADO">EMPLEADO</option>
-                  </select>
-                  <div class="invalid-feedback">Seleccione un rol.</div>
-                </div>
+                <select class="form-select" id="f-id_suscripcion">
+                  <option value="">-- Seleccione una suscripcion --</option>
+                </select>
+                <div class="invalid-feedback">Seleccione una suscripcion.</div>
               </div>
               <div class="mb-3">
-                <label class="form-label fw-semibold">
-                  Contrasena
-                  <span id="password-requerido" class="text-danger">*</span>
-                  <small
-                    id="password-opcional"
-                    class="text-muted fw-normal d-none"
-                    >(dejar en blanco para no cambiar)</small
-                  >
-                </label>
-                <div class="input-group">
-                  <input
-                    type="password"
-                    class="form-control"
-                    id="f-password"
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                  />
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    id="btn-ver-password"
-                    tabindex="-1"
-                  >
-                    <i class="bx bx-hide" id="ico-ojo"></i>
-                  </button>
-                </div>
-                <div class="invalid-feedback" id="password-feedback">
-                  Este campo es requerido.
-                </div>
+                <label class="form-label fw-semibold">Observaciones</label>
+                <textarea
+                  class="form-control"
+                  id="f-observaciones"
+                  rows="3"
+                  placeholder="Notas opcionales sobre esta licencia..."
+                ></textarea>
               </div>
-              <div class="mb-1" id="campo-estado" style="display: none">
-                <label class="form-label fw-semibold">Estado</label>
-                <div class="d-flex gap-3">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="estado"
-                      id="estado-activo"
-                      value="A"
-                      checked
-                    />
-                    <label class="form-check-label" for="estado-activo"
-                      >Activo</label
-                    >
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="estado"
-                      id="estado-inactivo"
-                      value="I"
-                    />
-                    <label class="form-check-label" for="estado-inactivo"
-                      >Inactivo</label
-                    >
-                  </div>
-                </div>
+              <div class="alert alert-info py-2 small mb-0">
+                <i class="bx bx-info-circle me-1"></i> La clave de licencia se
+                genera automáticamente con formato
+                <strong>SYS-XXXX-XXXX-XXXX-XXXX</strong>.
               </div>
             </form>
           </div>
@@ -491,40 +426,44 @@
               type="button"
               class="btn btn-primary"
               id="btn-guardar"
-              onclick="window.usuarioModule.guardar()"
+              onclick="window.licenciaModule.guardar()"
             >
               <span
                 id="btn-guardar-spinner"
                 class="spinner-border spinner-border-sm me-1 d-none"
                 role="status"
               ></span>
-              Guardar
+              Generar Licencia
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== MODAL CONFIRMAR DESACTIVAR ===== -->
-    <div
-      class="modal fade"
-      id="modal-desactivar"
-      tabindex="-1"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-sm">
+    <!-- ─── Modal: Revocar Licencia ─────────────────────────────────────────── -->
+    <div class="modal fade" id="modal-revocar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
         <div class="modal-content">
-          <div class="modal-body text-center p-4">
-            <div class="avatar avatar-xl bg-label-danger mb-3 mx-auto">
-              <i class="bx bx-user-x bx-lg text-danger"></i>
-            </div>
-            <h6 class="mb-1">Desactivar usuario</h6>
-            <p class="text-muted small mb-3">
-              El usuario "<strong id="desactivar-nombre"></strong>" sera marcado
-              como Inactivo.
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title">Revocar Licencia</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body text-center pb-0">
+            <i
+              class="bx bx-error-circle text-danger"
+              style="font-size: 3rem"
+            ></i>
+            <p class="mt-2 mb-0">
+              ¿Revocar la licencia de
+              <strong id="revocar-nombre"></strong>? Esta acción inhabilitará la
+              clave y no se puede deshacer.
             </p>
           </div>
-          <div class="modal-footer justify-content-center pt-0">
+          <div class="modal-footer border-top-0 justify-content-center">
             <button
               type="button"
               class="btn btn-outline-secondary btn-sm"
@@ -535,14 +474,14 @@
             <button
               type="button"
               class="btn btn-danger btn-sm"
-              id="btn-confirmar-desactivar"
+              id="btn-confirmar-revocar"
             >
               <span
-                id="btn-desactivar-spinner"
+                id="btn-revocar-spinner"
                 class="spinner-border spinner-border-sm me-1 d-none"
                 role="status"
               ></span>
-              Si, desactivar
+              Si, revocar
             </button>
           </div>
         </div>
@@ -556,6 +495,6 @@
     <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="../assets/vendor/js/menu.js"></script>
     <script src="../assets/js/main.js"></script>
-    <script src="../dist/usuarios.js"></script>
+    <script src="../dist/licencias.js"></script>
   </body>
 </html>

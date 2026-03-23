@@ -44,6 +44,14 @@ window.renovacionModule = (function () {
       document.getElementById(id).addEventListener("change", calcularMeses);
     });
 
+    // Auto-calcular fecha_fin al cambiar meses o fecha_inicio
+    document
+      .getElementById("f-meses")
+      .addEventListener("input", calcularFechaFinRenovacion);
+    document
+      .getElementById("f-fecha_inicio")
+      .addEventListener("change", calcularFechaFinRenovacion);
+
     cargarTabla();
   });
 
@@ -177,6 +185,15 @@ window.renovacionModule = (function () {
     if (d2 <= d1) return;
     const meses = Math.round((d2 - d1) / (1000 * 60 * 60 * 24 * 30));
     if (meses > 0) document.getElementById("f-meses").value = meses;
+  }
+
+  function calcularFechaFinRenovacion() {
+    var inicio = document.getElementById("f-fecha_inicio").value;
+    var meses = parseInt(document.getElementById("f-meses").value, 10);
+    if (!inicio || !meses || meses <= 0) return;
+    var d = new Date(inicio + "T00:00:00");
+    d.setMonth(d.getMonth() + meses);
+    document.getElementById("f-fecha_fin").value = d.toISOString().slice(0, 10);
   }
 
   // ─── Cargar select suscripciones ─────────────────────────────────────────────

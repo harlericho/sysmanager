@@ -130,6 +130,12 @@
                 <div>Renovaciones</div>
               </a>
             </li>
+            <li class="menu-item">
+              <a href="licencias.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-key"></i>
+                <div>Licencias</div>
+              </a>
+            </li>
             <li
               class="menu-header small text-uppercase"
               id="menu-admin"
@@ -492,6 +498,24 @@
                   <input type="date" class="form-control" id="f-fecha_inicio" />
                   <div class="invalid-feedback">Campo requerido.</div>
                 </div>
+                <div class="col-6">
+                  <label class="form-label fw-semibold"
+                    >Duración del plan</label
+                  >
+                  <select class="form-select" id="f-meses-calc">
+                    <option value="">-- Calcular fecha fin --</option>
+                    <option value="1">1 mes</option>
+                    <option value="3">3 meses</option>
+                    <option value="6">6 meses</option>
+                    <option value="12">12 meses</option>
+                    <option value="24">24 meses</option>
+                  </select>
+                  <div class="form-text">
+                    Completa la fecha fin automáticamente.
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3 mb-3">
                 <div class="col-6">
                   <label class="form-label fw-semibold"
                     >Fecha Fin <span class="text-danger">*</span></label

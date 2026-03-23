@@ -49,6 +49,18 @@ class SuscripcionController
       MailHelper::enviarBienvenida($suscripcion, $suscripcion['email']);
     }
 
+    // Si el tipo de pago es LICENCIA, generar la licencia automaticamente
+    if ($data['tipo_pago'] === 'LICENCIA' && $suscripcion) {
+      $licModel = new LicenciaModel();
+      LicenciaController::generarParaSuscripcion(
+        $id,
+        $suscripcion['fecha_fin'],
+        $tokenData->sub,
+        $licModel,
+        'Licencia inicial — generada automaticamente al contratar'
+      );
+    }
+
     Response::json(201, ['id' => $id, 'mensaje' => 'Suscripción creada correctamente']);
   }
 

@@ -48,8 +48,27 @@ window.suscripcionModule = (function () {
       .getElementById("input-buscar")
       .addEventListener("input", aplicarFiltros);
 
+    // Auto-calcular fecha_fin al cambiar fecha_inicio o duracion (meses)
+    document
+      .getElementById("f-fecha_inicio")
+      .addEventListener("change", calcularFechaFin);
+    document
+      .getElementById("f-meses-calc")
+      .addEventListener("change", calcularFechaFin);
+
     cargarTabla();
   });
+
+  // ─── Auto-calcular fecha fin ──────────────────────────────────────────────────
+
+  function calcularFechaFin() {
+    var inicio = document.getElementById("f-fecha_inicio").value;
+    var meses = parseInt(document.getElementById("f-meses-calc").value, 10);
+    if (!inicio || !meses || meses <= 0) return;
+    var d = new Date(inicio + "T00:00:00");
+    d.setMonth(d.getMonth() + meses);
+    document.getElementById("f-fecha_fin").value = d.toISOString().slice(0, 10);
+  }
 
   // ─── Cargar tabla ─────────────────────────────────────────────────────────────
 

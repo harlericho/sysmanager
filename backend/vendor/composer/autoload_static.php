@@ -44,6 +44,8 @@ class ComposerStaticInit839b8b76842b609ae45c7f82caef6f68
         'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
         'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'JwtHelper' => __DIR__ . '/../..' . '/helpers/JwtHelper.php',
+        'LicenciaController' => __DIR__ . '/../..' . '/controllers/LicenciaController.php',
+        'LicenciaModel' => __DIR__ . '/../..' . '/models/LicenciaModel.php',
         'MailHelper' => __DIR__ . '/../..' . '/helpers/MailHelper.php',
         'PHPMailer\\PHPMailer\\DSNConfigurator' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/DSNConfigurator.php',
         'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',

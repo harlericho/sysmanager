@@ -43,6 +43,19 @@ class RenovacionController
       MailHelper::enviarRenovacion($renovacion, $renovacion['email']);
     }
 
+    // Si la suscripcion es de tipo LICENCIA, vencer la licencia anterior y crear una nueva
+    if ($renovacion && $renovacion['tipo_pago'] === 'LICENCIA') {
+      $licModel = new LicenciaModel();
+      $licModel->vencerBySuscripcion((int) $data['id_suscripcion']);
+      LicenciaController::generarParaSuscripcion(
+        (int) $data['id_suscripcion'],
+        $renovacion['fecha_fin'],
+        $tokenData->sub,
+        $licModel,
+        'Licencia renovada — ' . $renovacion['meses'] . ' mes(es) desde ' . $renovacion['fecha_inicio']
+      );
+    }
+
     Response::json(201, ['id' => $id, 'mensaje' => 'Renovación registrada correctamente']);
   }
 
