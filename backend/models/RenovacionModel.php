@@ -25,10 +25,13 @@ class RenovacionModel
   public function getById(int $id)
   {
     $stmt = $this->db->prepare(
-      "SELECT r.*, s.id_cliente, c.nombre_empresa
+      "SELECT r.*, s.id_cliente, s.tipo_pago,
+              c.nombre_empresa, c.email,
+              p.nombre AS nombre_plan, p.tipo AS tipo_plan
              FROM tbl_renovacion r
              INNER JOIN tbl_suscripcion s ON r.id_suscripcion = s.id
              INNER JOIN tbl_cliente     c ON s.id_cliente     = c.id
+             INNER JOIN tbl_plan        p ON s.id_plan        = p.id
              WHERE r.id = ?"
     );
     $stmt->execute([$id]);

@@ -528,6 +528,47 @@
       </div>
     </div>
 
+    <!-- ===== MODAL CONFIRMAR ENVIAR CORREO ===== -->
+    <div class="modal fade" id="modal-correo" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-body text-center p-4">
+            <div class="avatar avatar-xl bg-label-info mb-3 mx-auto">
+              <i class="bx bx-envelope bx-lg text-info"></i>
+            </div>
+            <h6 class="mb-1">Reenviar correo</h6>
+            <p class="text-muted small mb-3">
+              Se enviará el correo de bienvenida al cliente "<strong
+                id="correo-nombre"
+              ></strong
+              >".
+            </p>
+          </div>
+          <div class="modal-footer justify-content-center pt-0">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Volver
+            </button>
+            <button
+              type="button"
+              class="btn btn-info btn-sm"
+              id="btn-confirmar-correo"
+            >
+              <span
+                id="btn-correo-spinner"
+                class="spinner-border spinner-border-sm me-1 d-none"
+                role="status"
+              ></span>
+              Sí, enviar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== MODAL CONFIRMAR CANCELAR ===== -->
     <div
       class="modal fade"

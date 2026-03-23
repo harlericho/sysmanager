@@ -5,6 +5,8 @@ window.suscripcionModule = (function () {
   let modalSuscripcion = null;
   let modalCancelar = null;
   let idCancelar = null;
+  let modalCorreo = null;
+  let idCorreo = null;
   let todasLasSuscripciones = [];
   let filtroActivoEstado = "";
   let planesCache = [];
@@ -27,6 +29,7 @@ window.suscripcionModule = (function () {
     modalCancelar = new bootstrap.Modal(
       document.getElementById("modal-cancelar"),
     );
+    modalCorreo = new bootstrap.Modal(document.getElementById("modal-correo"));
 
     document
       .getElementById("modal-suscripcion")
@@ -35,6 +38,10 @@ window.suscripcionModule = (function () {
     document
       .getElementById("btn-confirmar-cancelar")
       .addEventListener("click", ejecutarCancelar);
+
+    document
+      .getElementById("btn-confirmar-correo")
+      .addEventListener("click", ejecutarEnviarCorreo);
 
     document
       .getElementById("input-buscar")
@@ -118,6 +125,11 @@ window.suscripcionModule = (function () {
           s.id +
           ')"><i class="bx bx-edit"></i></button>';
 
+        const btnCorreo =
+          '<button class="btn btn-sm btn-icon btn-outline-info me-1" title="Reenviar correo" onclick="window.suscripcionModule.enviarCorreo(' +
+          s.id +
+          ')"><i class="bx bx-envelope"></i></button>';
+
         const btnCancelar =
           s.estado !== "CANCELADO"
             ? '<button class="btn btn-sm btn-icon btn-outline-danger" title="Cancelar" onclick="window.suscripcionModule.confirmarCancelar(' +
@@ -162,6 +174,7 @@ window.suscripcionModule = (function () {
           "</td>" +
           '<td class="text-center">' +
           btnEditar +
+          btnCorreo +
           btnCancelar +
           "</td>" +
           "</tr>"
@@ -446,6 +459,50 @@ window.suscripcionModule = (function () {
       });
   }
 
+  // ─── Reenviar correo ──────────────────────────────────────────────────────────
+
+  function enviarCorreo(id) {
+    idCorreo = id;
+    var sus = todasLasSuscripciones.find(function (s) {
+      return s.id == id;
+    });
+    document.getElementById("correo-nombre").textContent = sus
+      ? sus.nombre_empresa
+      : "este cliente";
+    modalCorreo.show();
+  }
+
+  function ejecutarEnviarCorreo() {
+    if (!idCorreo) return;
+
+    const spinner = document.getElementById("btn-correo-spinner");
+    const btnC = document.getElementById("btn-confirmar-correo");
+    spinner.classList.remove("d-none");
+    btnC.disabled = true;
+
+    api
+      .post("/suscripciones/" + idCorreo + "/enviar-correo", {})
+      .then(function (resp) {
+        modalCorreo.hide();
+        mostrarAlertaGlobal(
+          "success",
+          resp.mensaje || "Correo enviado correctamente.",
+        );
+      })
+      .catch(function (err) {
+        modalCorreo.hide();
+        mostrarAlertaGlobal(
+          "danger",
+          (err && (err.error || err.mensaje)) || "No se pudo enviar el correo.",
+        );
+      })
+      .finally(function () {
+        spinner.classList.add("d-none");
+        btnC.disabled = false;
+        idCorreo = null;
+      });
+  }
+
   // ─── Cancelar suscripcion ─────────────────────────────────────────────────────
 
   function confirmarCancelar(id) {
@@ -581,5 +638,6 @@ window.suscripcionModule = (function () {
     guardar: guardar,
     confirmarCancelar: confirmarCancelar,
     filtrarEstado: filtrarEstado,
+    enviarCorreo: enviarCorreo,
   };
 })();

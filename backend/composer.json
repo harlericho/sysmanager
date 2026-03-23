@@ -4,7 +4,8 @@
     "type": "project",
     "require": {
         "php": "^7.4",
-        "firebase/php-jwt": "^6.4"
+        "firebase/php-jwt": "^6.4",
+        "phpmailer/phpmailer": "^7.0"
     },
     "autoload": {
         "classmap": [

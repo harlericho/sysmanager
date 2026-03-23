@@ -42,6 +42,13 @@ class SuscripcionController
     $data['creado_por'] = $tokenData->sub;
 
     $id = $this->model->create($data);
+
+    // Enviar correo de bienvenida al cliente (sin interrumpir la respuesta si falla)
+    $suscripcion = $this->model->getById($id);
+    if ($suscripcion && !empty($suscripcion['email'])) {
+      MailHelper::enviarBienvenida($suscripcion, $suscripcion['email']);
+    }
+
     Response::json(201, ['id' => $id, 'mensaje' => 'Suscripción creada correctamente']);
   }
 
@@ -64,5 +71,22 @@ class SuscripcionController
   {
     $this->model->delete($id);
     Response::json(200, ['mensaje' => 'Suscripción cancelada correctamente']);
+  }
+
+  public function sendMail(int $id, $tokenData): void
+  {
+    $suscripcion = $this->model->getById($id);
+    if (!$suscripcion) {
+      Response::json(404, ['error' => 'Suscripción no encontrada']);
+    }
+    if (empty($suscripcion['email'])) {
+      Response::json(422, ['error' => 'El cliente no tiene correo electrónico registrado']);
+    }
+    $enviado = MailHelper::enviarBienvenida($suscripcion, $suscripcion['email']);
+    if ($enviado) {
+      Response::json(200, ['mensaje' => 'Correo enviado correctamente a ' . $suscripcion['email']]);
+    } else {
+      Response::json(500, ['error' => 'No se pudo enviar el correo. Verifique la configuración SMTP.']);
+    }
   }
 }

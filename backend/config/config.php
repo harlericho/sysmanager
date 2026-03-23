@@ -1,10 +1,11 @@
 <?php
 // config/config.php
 
-$dbConfig  = parse_ini_file(__DIR__ . '/init/config.ini');
-$jwtConfig = parse_ini_file(__DIR__ . '/init/jwt.ini');
+$dbConfig   = parse_ini_file(__DIR__ . '/init/config.ini');
+$jwtConfig  = parse_ini_file(__DIR__ . '/init/jwt.ini');
+$mailConfig = parse_ini_file(__DIR__ . '/init/mail.ini');
 
-if (!$dbConfig || !$jwtConfig) {
+if (!$dbConfig || !$jwtConfig || !$mailConfig) {
   die("Error: No se pudieron cargar los archivos de configuración .ini");
 }
 

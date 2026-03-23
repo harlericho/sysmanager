@@ -25,7 +25,7 @@ class SuscripcionModel
   public function getById(int $id)
   {
     $stmt = $this->db->prepare(
-      "SELECT s.*, c.nombre_empresa, p.nombre AS nombre_plan, p.tipo AS tipo_plan
+      "SELECT s.*, c.nombre_empresa, c.email, p.nombre AS nombre_plan, p.tipo AS tipo_plan
              FROM tbl_suscripcion s
              INNER JOIN tbl_cliente c ON s.id_cliente = c.id
              INNER JOIN tbl_plan    p ON s.id_plan    = p.id

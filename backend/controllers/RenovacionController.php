@@ -36,6 +36,13 @@ class RenovacionController
     }
 
     $id = $this->model->create($data);
+
+    // Enviar correo de confirmación de renovación (no interrumpe si falla)
+    $renovacion = $this->model->getById($id);
+    if ($renovacion && !empty($renovacion['email'])) {
+      MailHelper::enviarRenovacion($renovacion, $renovacion['email']);
+    }
+
     Response::json(201, ['id' => $id, 'mensaje' => 'Renovación registrada correctamente']);
   }
 

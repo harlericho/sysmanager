@@ -11,6 +11,7 @@ $uri       = '/' . trim(substr($uri, strlen($scriptDir)), '/');
 $segments = array_values(array_filter(explode('/', $uri)));
 $resource = $segments[0] ?? '';
 $sub      = $segments[1] ?? null;
+$action   = $segments[2] ?? null;
 $id       = ($sub !== null && ctype_digit((string) $sub)) ? (int) $sub : null;
 
 // =====================
@@ -56,6 +57,8 @@ if ($method === 'GET'    && $id === null) {
   $ctrl->index($tokenData);
 } elseif ($method === 'GET') {
   $ctrl->show($id, $tokenData);
+} elseif ($method === 'POST' && $id !== null && $action === 'enviar-correo') {
+  $ctrl->sendMail($id, $tokenData);
 } elseif ($method === 'POST') {
   $ctrl->store($tokenData);
 } elseif ($method === 'PUT'   && $id !== null) {
