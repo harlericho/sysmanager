@@ -6,6 +6,9 @@ backend/data/db.sql
 vendor/
 node_modules/
 
+# ─── Configuración sensible (credenciales) ────────────────────
+backend/config/init/mail.ini
+
 # ─── Logs y temporales ────────────────────────────────────────
 *.log
 *.cache
