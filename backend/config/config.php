@@ -1,6 +1,9 @@
 <?php
 // config/config.php
 
+// Zona horaria del servidor — ajusta según tu país
+date_default_timezone_set('America/Guayaquil'); // UTC-5 (Ecuador)
+
 $dbConfig   = parse_ini_file(__DIR__ . '/init/config.ini');
 $jwtConfig  = parse_ini_file(__DIR__ . '/init/jwt.ini');
 $mailConfig = parse_ini_file(__DIR__ . '/init/mail.ini');
