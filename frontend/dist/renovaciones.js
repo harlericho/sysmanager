@@ -397,6 +397,7 @@ window.renovacionModule = (function () {
 
   function mostrarAlertaGlobal(tipo, msg) {
     const el = document.getElementById("alerta-global");
+    if (!el) return;
     el.className = "alert alert-" + tipo + " alert-dismissible fade show";
     el.innerHTML =
       '<i class="bx ' +
@@ -407,7 +408,7 @@ window.renovacionModule = (function () {
           : "bx-error-circle") +
       ' me-2"></i>' +
       escapeHtml(msg) +
-      '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+      '<button type="button" class="btn-close" onclick="this.closest(\'#alerta-global\').className=\'alert d-none\'"></button>';
     clearTimeout(el._t);
     el._t = setTimeout(function () {
       el.className = "alert d-none";
