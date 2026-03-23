@@ -8,6 +8,7 @@ window.suscripcionModule = (function () {
   let modalCorreo = null;
   let idCorreo = null;
   let todasLasSuscripciones = [];
+  let datosActuales = [];
   let filtroActivoEstado = "";
   let planesCache = [];
 
@@ -78,6 +79,7 @@ window.suscripcionModule = (function () {
   function renderTabla(lista) {
     const tbody = document.getElementById("tabla-body");
     const footer = document.getElementById("footer-total");
+    datosActuales = Array.isArray(lista) ? lista : [];
 
     if (!lista || lista.length === 0) {
       tbody.innerHTML =
@@ -631,6 +633,126 @@ window.suscripcionModule = (function () {
       .replace(/'/g, "&#039;");
   }
 
+  // ─── Exportar PDF ─────────────────────────────────────────────────────────────
+
+  function exportarPDF() {
+    if (!window.jspdf) {
+      alert("La libreria jsPDF no esta disponible. Verifique su conexion.");
+      return;
+    }
+    if (datosActuales.length === 0) {
+      mostrarAlertaGlobal("warning", "No hay datos para exportar.");
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    doc.setFontSize(16);
+    doc.setTextColor(99, 89, 210);
+    doc.text("Listado de Suscripciones", 14, 15);
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text("Generado: " + new Date().toLocaleDateString("es-ES"), 14, 22);
+    doc.text("Total: " + datosActuales.length + " registro(s)", 14, 27);
+
+    const columns = [
+      "#",
+      "Cliente",
+      "Plan",
+      "Costo Inst.",
+      "Inicio",
+      "Fin",
+      "Tipo Pago",
+      "Estado",
+    ];
+    const rows = datosActuales.map(function (s, i) {
+      const costo =
+        s.tipo_plan === "LOCAL" && parseFloat(s.precio_instalacion) > 0
+          ? "$ " + parseFloat(s.precio_instalacion).toFixed(2)
+          : "—";
+      return [
+        i + 1,
+        s.nombre_empresa || "",
+        s.nombre_plan || "",
+        costo,
+        s.fecha_inicio ? s.fecha_inicio.slice(0, 10) : "",
+        s.fecha_fin ? s.fecha_fin.slice(0, 10) : "",
+        s.tipo_pago || "",
+        s.estado || "",
+      ];
+    });
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+      startY: 32,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: {
+        fillColor: [99, 89, 210],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      alternateRowStyles: { fillColor: [245, 245, 250] },
+      columnStyles: { 0: { halign: "center", cellWidth: 10 } },
+    });
+
+    doc.save("suscripciones_" + fechaLocalHoy() + ".pdf");
+  }
+
+  // ─── Exportar Excel ───────────────────────────────────────────────────────────
+
+  function exportarExcel() {
+    if (!window.XLSX) {
+      alert("La libreria SheetJS no esta disponible. Verifique su conexion.");
+      return;
+    }
+    if (datosActuales.length === 0) {
+      mostrarAlertaGlobal("warning", "No hay datos para exportar.");
+      return;
+    }
+    const wsData = [
+      [
+        "#",
+        "Cliente",
+        "Plan",
+        "Costo Inst.",
+        "Inicio",
+        "Fin",
+        "Tipo Pago",
+        "Estado",
+      ],
+    ];
+    datosActuales.forEach(function (s, i) {
+      wsData.push([
+        i + 1,
+        s.nombre_empresa || "",
+        s.nombre_plan || "",
+        s.tipo_plan === "LOCAL" && parseFloat(s.precio_instalacion) > 0
+          ? parseFloat(s.precio_instalacion)
+          : 0,
+        s.fecha_inicio ? s.fecha_inicio.slice(0, 10) : "",
+        s.fecha_fin ? s.fecha_fin.slice(0, 10) : "",
+        s.tipo_pago || "",
+        s.estado || "",
+      ]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    // Ancho de columnas
+    ws["!cols"] = [
+      { wch: 5 },
+      { wch: 30 },
+      { wch: 20 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+      { wch: 12 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Suscripciones");
+    XLSX.writeFile(wb, "suscripciones_" + fechaLocalHoy() + ".xlsx");
+  }
+
   // ─── API publica ──────────────────────────────────────────────────────────────
   return {
     abrirModalNuevo: abrirModalNuevo,
@@ -639,5 +761,7 @@ window.suscripcionModule = (function () {
     confirmarCancelar: confirmarCancelar,
     filtrarEstado: filtrarEstado,
     enviarCorreo: enviarCorreo,
+    exportarPDF: exportarPDF,
+    exportarExcel: exportarExcel,
   };
 })();

@@ -6,6 +6,7 @@ window.renovacionModule = (function () {
   let modalEliminar = null;
   let idEliminar = null;
   let todasLasRenovaciones = [];
+  let datosActuales = [];
 
   // ─── Inicializar ──────────────────────────────────────────────────────────────
 
@@ -74,6 +75,7 @@ window.renovacionModule = (function () {
   function renderTabla(lista) {
     const tbody = document.getElementById("tabla-body");
     const footer = document.getElementById("footer-total");
+    datosActuales = Array.isArray(lista) ? lista : [];
 
     if (!lista || lista.length === 0) {
       tbody.innerHTML =
@@ -465,11 +467,137 @@ window.renovacionModule = (function () {
       .replace(/'/g, "&#039;");
   }
 
+  // ─── Exportar PDF ─────────────────────────────────────────────────────────────
+
+  function exportarPDF() {
+    if (!window.jspdf) {
+      alert("La libreria jsPDF no esta disponible. Verifique su conexion.");
+      return;
+    }
+    if (datosActuales.length === 0) {
+      mostrarAlertaGlobal("warning", "No hay datos para exportar.");
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    doc.setFontSize(16);
+    doc.setTextColor(99, 89, 210);
+    doc.text("Historial de Renovaciones", 14, 15);
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text("Generado: " + new Date().toLocaleDateString("es-ES"), 14, 22);
+
+    const totalPrecio = datosActuales.reduce(function (acc, r) {
+      return acc + parseFloat(r.precio || 0);
+    }, 0);
+    doc.text(
+      "Total: " +
+        datosActuales.length +
+        " registro(s)  |  Acumulado: $ " +
+        totalPrecio.toFixed(2),
+      14,
+      27,
+    );
+
+    const columns = [
+      "#",
+      "Cliente",
+      "Suscripcion #",
+      "Fecha Inicio",
+      "Fecha Fin",
+      "Meses",
+      "Precio",
+    ];
+    const rows = datosActuales.map(function (r, i) {
+      return [
+        i + 1,
+        r.nombre_empresa || "",
+        "#" + (r.id_suscripcion || ""),
+        r.fecha_inicio ? r.fecha_inicio.slice(0, 10) : "",
+        r.fecha_fin ? r.fecha_fin.slice(0, 10) : "",
+        parseInt(r.meses) || 0,
+        parseFloat(r.precio || 0) > 0
+          ? "$ " + parseFloat(r.precio).toFixed(2)
+          : "—",
+      ];
+    });
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+      startY: 32,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: {
+        fillColor: [99, 89, 210],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      alternateRowStyles: { fillColor: [245, 245, 250] },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 10 },
+        2: { halign: "center" },
+      },
+    });
+
+    doc.save("renovaciones_" + fechaLocalHoy() + ".pdf");
+  }
+
+  // ─── Exportar Excel ───────────────────────────────────────────────────────────
+
+  function exportarExcel() {
+    if (!window.XLSX) {
+      alert("La libreria SheetJS no esta disponible. Verifique su conexion.");
+      return;
+    }
+    if (datosActuales.length === 0) {
+      mostrarAlertaGlobal("warning", "No hay datos para exportar.");
+      return;
+    }
+    const wsData = [
+      [
+        "#",
+        "Cliente",
+        "Suscripcion #",
+        "Fecha Inicio",
+        "Fecha Fin",
+        "Meses",
+        "Precio",
+      ],
+    ];
+    datosActuales.forEach(function (r, i) {
+      wsData.push([
+        i + 1,
+        r.nombre_empresa || "",
+        r.id_suscripcion || "",
+        r.fecha_inicio ? r.fecha_inicio.slice(0, 10) : "",
+        r.fecha_fin ? r.fecha_fin.slice(0, 10) : "",
+        parseInt(r.meses) || 0,
+        parseFloat(r.precio || 0),
+      ]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    ws["!cols"] = [
+      { wch: 5 },
+      { wch: 30 },
+      { wch: 14 },
+      { wch: 13 },
+      { wch: 13 },
+      { wch: 8 },
+      { wch: 12 },
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Renovaciones");
+    XLSX.writeFile(wb, "renovaciones_" + fechaLocalHoy() + ".xlsx");
+  }
+
   // ─── API publica ──────────────────────────────────────────────────────────────
   return {
     abrirModalNuevo: abrirModalNuevo,
     abrirModalEditar: abrirModalEditar,
     guardar: guardar,
     confirmarEliminar: confirmarEliminar,
+    exportarPDF: exportarPDF,
+    exportarExcel: exportarExcel,
   };
 })();
