@@ -65,6 +65,7 @@ class MailHelper
 
     $badgeColor = $tipoPlan === 'NUBE' ? '#03c3ec' : '#696cff';
     $badgeLabel = $tipoPlan === 'NUBE' ? '☁️ Plan Nube' : '🖥️ Plan Local';
+    $anio = date('Y');
 
     return <<<HTML
 <!DOCTYPE html>
@@ -158,7 +159,7 @@ class MailHelper
           <tr>
             <td style="background:#f8f8ff;padding:20px 40px;text-align:center;border-top:1px solid #e0e0f0;">
               <p style="margin:0;color:#a1acb8;font-size:12px;line-height:1.6;">
-                © 2025 SolucionesITEC · <a href="https://solucionesitec.com" style="color:#696cff;text-decoration:none;">solucionesitec.com</a><br/>
+                &copy; {$anio} SolucionesITEC &middot; <a href="https://solucionesitec.com" style="color:#696cff;text-decoration:none;">solucionesitec.com</a><br/>
                 Este correo fue enviado automáticamente. Por favor no lo respondas si no reconoces esta suscripción.
               </p>
             </td>
@@ -295,7 +296,7 @@ TEXT;
 
       // Footer
       . '<tr><td style="background:#f8f8ff;padding:20px 40px;text-align:center;border-top:1px solid #e0e0f0;">'
-      . '<p style="margin:0;color:#a1acb8;font-size:12px;">© 2025 SolucionesITEC · '
+      . '<p style="margin:0;color:#a1acb8;font-size:12px;">© ' . date('Y') . ' SolucionesITEC · '
       . '<a href="https://solucionesitec.com" style="color:#696cff;text-decoration:none;">solucionesitec.com</a></p>'
       . '</td></tr>'
 
